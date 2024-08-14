@@ -11,7 +11,7 @@
     </div>
 
     <aside class="details">
-      <span class="hello_txt">Hello, I'm ashok</span>
+      <span class="hello_txt">Hello, I'm</span>
       <span class="name_txt">Ashok</span>
       <span class="deg_txt">Software Developer</span>
     </aside>
