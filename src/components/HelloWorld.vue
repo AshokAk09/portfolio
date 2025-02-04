@@ -14,6 +14,7 @@
       <span class="hello_txt">Hello, I'm kumar kavin</span>
       <span class="name_txt">Ashok</span>
       <span class="deg_txt">Software Developer</span>
+      <!-- <input type="text" v-pubvalidate> -->
     </aside>
     <img class="ak_img fade-in-right" alt="Vue logo" src="../assets/ak_trans.png">
     <aside class="contact_link">
