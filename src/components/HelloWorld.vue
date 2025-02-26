@@ -12,7 +12,7 @@
 
     <aside class="details">
       <span class="hello_txt">Hello, I'm</span>
-      <span class="name_txt">Ashok</span>
+      <span class="name_txt">Ashokkumar</span>
       <span class="deg_txt">Software Developer</span>
       <!-- <input type="text" v-pubvalidate> -->
     </aside>
