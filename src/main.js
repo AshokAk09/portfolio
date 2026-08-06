@@ -1,8 +1,7 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
+import { reveal } from './directives/reveal'
+import './styles/tokens.css'
+import './styles/base.css'
 
-Vue.config.productionTip = false
-
-new Vue({
-  render: h => h(App),
-}).$mount('#app')
+createApp(App).directive('reveal', reveal).mount('#app')
