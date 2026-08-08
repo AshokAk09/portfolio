@@ -46,6 +46,21 @@ select {
   color: inherit;
 }
 
+/**
+ * Buttons keep the UA's opaque light background unless it is explicitly
+ * cleared — on a dark canvas that renders as a solid white block, and any
+ * icon drawn in --text becomes white-on-white. Reset it here so no future
+ * button can reintroduce the bug.
+ */
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 h1,
 h2,
 h3,

@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { nav, profile } from '@/content/site'
 
 const scrolled = ref(false)
@@ -28,13 +28,30 @@ function close() {
   menuOpen.value = false
 }
 
+/**
+ * Lock the page behind the open menu. Without this the hero scrolls under a
+ * fixed panel, which reads as two pages moving at once.
+ */
+watch(menuOpen, (open) => {
+  document.documentElement.style.overflow = open ? 'hidden' : ''
+})
+
+/** Escape closes it — expected of anything that traps the view. */
+function onKeydown(e) {
+  if (e.key === 'Escape') close()
+}
+
 onMounted(() => {
   onScroll()
   window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('keydown', onKeydown)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('keydown', onKeydown)
+  // Never leave the page unscrollable if this unmounts while open
+  document.documentElement.style.overflow = ''
 })
 </script>
 
@@ -51,9 +68,12 @@ onBeforeUnmount(() => {
         type="button"
         :aria-expanded="menuOpen"
         aria-controls="nav-links"
+        :aria-label="menuOpen ? 'Close menu' : 'Open menu'"
         @click="menuOpen = !menuOpen"
       >
-        <span class="visually-hidden">{{ menuOpen ? 'Close' : 'Open' }} menu</span>
+        <!-- The label lives on aria-label, not in a child span: a
+             visually-hidden span would be the button's :first-child, which
+             silently breaks the bar selectors that build the X. -->
         <span class="nav__bar" aria-hidden="true"></span>
         <span class="nav__bar" aria-hidden="true"></span>
       </button>
@@ -223,13 +243,26 @@ onBeforeUnmount(() => {
 
 .nav__toggle {
   display: none;
-  width: 40px;
-  height: 40px;
-  margin-inline-end: -8px;
+  /* 44px is the minimum comfortable touch target; the visual box is smaller
+     than the hit area via the negative margin. */
+  width: 44px;
+  height: 44px;
+  margin-inline-end: -10px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 5px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+
+.nav__toggle:hover {
+  border-color: var(--line-strong);
+  background: var(--bg-raised);
 }
 
 .nav__bar {
@@ -253,8 +286,11 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 720px) {
+  /* The name stays. Initials alone are a monogram nobody can decode — on the
+     one surface where a stranger is deciding whether to keep reading, the
+     whole name has to be legible. */
   .nav__mark-name {
-    display: none;
+    font-size: 0.72rem;
   }
 
   .nav__toggle {
@@ -293,13 +329,44 @@ onBeforeUnmount(() => {
   }
 
   .nav__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding-block: var(--space-s);
-    font-size: var(--step-1);
+    font-size: var(--step-2);
+    color: var(--text);
     border-block-end: 1px solid var(--line);
   }
 
+  /* A chevron gives each row somewhere to point; without it the list reads as
+     four labels floating in a box. */
+  .nav__link::before {
+    content: '';
+    order: 2;
+    width: 7px;
+    height: 7px;
+    border-block-start: 1px solid var(--text-faint);
+    border-inline-end: 1px solid var(--text-faint);
+    rotate: 45deg;
+  }
+
+  .nav__link.is-active {
+    color: var(--accent);
+  }
+
+  .nav__link.is-active::before {
+    border-color: var(--accent);
+  }
+
+  /* The desktop underline would sit on top of the row divider */
   .nav__link::after {
     display: none;
+  }
+
+  /* Whatever ends the list — last link, or the résumé button when present —
+     shouldn't draw a rule into empty padding. */
+  .nav__links > :last-child {
+    border-block-end: 0;
   }
 
   .nav__resume {

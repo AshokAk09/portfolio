@@ -1,8 +1,13 @@
 <script setup>
-import { hero, profile, yearsOfExperience } from '@/content/site'
+import { about, hero, profile, yearsOfExperience } from '@/content/site'
 import SocialLinks from './SocialLinks.vue'
 
 const years = yearsOfExperience()
+
+// Read from the content file rather than repeating it here — this line was
+// hardcoded to "Front-end & scale", which had drifted out of step with both
+// the content file and the full-stack positioning.
+const focus = about.facts.find((f) => f.label === 'Focus')?.value ?? profile.title
 </script>
 
 <template>
@@ -54,7 +59,7 @@ const years = yearsOfExperience()
         </div>
         <div class="hero__meta-item">
           <dt>Focus</dt>
-          <dd>Front-end &amp; scale</dd>
+          <dd>{{ focus }}</dd>
         </div>
       </dl>
     </div>
